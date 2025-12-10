@@ -1,31 +1,3 @@
 FROM nginx:alpine
 COPY index.html /usr/share/nginx/html/index.html
 EXPOSE 80
-### Файл 3: .github/workflows/docker.yml (магия 24/7)
-name: Website 24/7
-
-on:
-  push:
-    branches: [ main ]
-  schedule:
-    - cron: '*/30 * * * *'       # каждые 30 минут
-  workflow_dispatch:
-
-jobs:
-  run-website:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout код
-        uses: actions/checkout@v4
-
-      - name: Запуск сайта в Docker
-        run: |
-          docker run -d \
-            --name my-website \
-            --restart unless-stopped \
-            -p 80:80 \
-            $(docker build -q .)
-
-          echo "Сайт запущен! Доступен по адресу:"
-          echo "http://$(curl -s ifconfig.me):80"
-          sleep 5h 50m   # держим job живым почти 6 часов
